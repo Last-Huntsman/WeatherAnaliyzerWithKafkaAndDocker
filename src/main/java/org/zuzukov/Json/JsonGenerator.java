@@ -7,7 +7,9 @@ import org.zuzukov.Enums.Weathers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Random;
-
+/**
+ * Генерирует данные о погоде для указанного города и времени
+ */
 public class JsonGenerator {
     private static final Random RANDOM = new Random();
     private static final Weathers[] weathers = Weathers.values();

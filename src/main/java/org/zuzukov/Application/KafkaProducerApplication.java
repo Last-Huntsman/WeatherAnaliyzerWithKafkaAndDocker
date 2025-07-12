@@ -15,9 +15,9 @@ import org.zuzukov.Json.JsonSerializer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Properties;
-import java.util.Random;
-import java.util.concurrent.ExecutionException;
-
+/**
+ * Отправляет сообщения в брокер
+ */
 public class KafkaProducerApplication {
     private static final String TOPIC = "weather";
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerApplication.class);
@@ -30,7 +30,9 @@ public class KafkaProducerApplication {
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class.getName());
 
         try (var producer = new KafkaProducer<String, JSONObject>(properties)) {
-            sendTestMessage(producer, true);
+            for (int i = 0; i < 7; i++) {
+                sendTestMessage(producer, true);
+            }
         }
     }
 
@@ -46,6 +48,7 @@ public class KafkaProducerApplication {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     throw new RuntimeException(e);
                 }
             }

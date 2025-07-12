@@ -7,14 +7,19 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.zuzukov.AnalyzerPackage.WeatherStatisticsCollector;
 import org.zuzukov.Json.JsonDeserializer;
 
 import java.time.Duration;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+/**
+ * Читает сообщения из брокера и отправляет в WeatherStatistics
+ */
 public class KafkaConsumerApplication {
     private static Logger Log = LoggerFactory.getLogger(KafkaConsumerApplication.class);
+    private static WeatherStatisticsCollector weatherStatisticsCollector = new WeatherStatisticsCollector();
 
     public static void main(String[] args) {
         var properties = new Properties();
@@ -25,7 +30,7 @@ public class KafkaConsumerApplication {
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "org.zuzukov");
 
-
+        startStatsPrinter();
         try (var consumer = new KafkaConsumer<String, JSONObject>(properties)) {
             consumer.subscribe(Pattern.compile("weather"));
 
@@ -36,6 +41,7 @@ public class KafkaConsumerApplication {
                         records.forEach(record -> {
                             try {
                                 Log.info("Получено сообщение: {}", record.value());
+                                weatherStatisticsCollector.process(record.value());
                             } catch (Exception ex) {
                                 Log.error("Ошибка при обработке записи", ex);
                             }
@@ -46,14 +52,33 @@ public class KafkaConsumerApplication {
                             }
                         });
                     }
+
+
                 }
             } catch (Exception e) {
                 Log.error("Ошибка в потреблении сообщений", e);
             } finally {
+                weatherStatisticsCollector.printStats();
                 consumer.close();
             }
         }
 
+    }
+    private static void startStatsPrinter() {
+        Thread statsThread = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(30_000);
+                    Log.info("=== Актуальная статистика по погоде ===");
+                    weatherStatisticsCollector.printStats();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
+        statsThread.setDaemon(true);
+        statsThread.start();
     }
 
 }

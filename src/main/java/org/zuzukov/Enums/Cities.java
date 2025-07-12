@@ -6,11 +6,11 @@ public enum Cities {
     NOVOSIBIRSK("Новосибирск"),
     YEKATERINBURG("Екатеринбург"),
     KAZAN("Казань"),
-    SAMARA("Самара"),
-    OMSK("Омск"),
-    CHELYABINSK("Челябинск"),
-    ROSTOV_ON_DON("Ростов-на-Дону"),
-    IRKUTSK("Иркутск");
+    MAGADAN("Магадан"),
+    CHUKOTKA("Чукотка"),
+    TYUMEN("Тюмень"),
+    ROSTOV_ON_DON("Ростов-на-Дону");
+
 
     private final String name;
 
