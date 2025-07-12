@@ -19,8 +19,8 @@ public class KafkaConsumerApplication {
     public static void main(String[] args) {
         var properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class.getName());
         properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "org.zuzukov");
@@ -31,12 +31,13 @@ public class KafkaConsumerApplication {
 
             while (true) {
                 ConsumerRecords<String, JSONObject> records = consumer.poll(Duration.ofMillis(1000));
-
                 if (!records.isEmpty()) {
-                    records.forEach(record -> System.out.println(record.value()));
+                    records.forEach(record -> Log.info("Получено сообщение: {}", record.value()));
                     consumer.commitAsync();
                 }
             }
         }
+
     }
+
 }

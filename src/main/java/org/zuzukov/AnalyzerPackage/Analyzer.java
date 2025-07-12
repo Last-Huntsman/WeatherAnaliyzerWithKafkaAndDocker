@@ -1,4 +1,5 @@
-package org.zuzukov;
+package org.zuzukov.AnalyzerPackage;
 
 public class Analyzer {
+
 }

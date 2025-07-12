@@ -18,40 +18,49 @@ import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 public class KafkaProducerApplication {
+    private static final String TOPIC = "weather";
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerApplication.class);
     private static final Random RANDOM = new Random();
     private static final Weathers[] weathers = Weathers.values();
     private static final Cities[] cities = Cities.values();
-    private static int DaysPlus;
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    public static void main(String[] args) {
         var properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class.getName());
 
-
         try (var producer = new KafkaProducer<String, JSONObject>(properties)) {
+            sendTestMessage(producer, 1000);
+        }
+    }
 
-            while (DaysPlus++ < 7) {
-                for (Cities city : cities) {
-                    JSONObject jsObject = new JSONObject();
-                    jsObject.put("weather", weathers[RANDOM.nextInt(weathers.length)].getName());
-                    jsObject.put("cities", city.getName());
-                    jsObject.put("temperature", RANDOM.nextInt(10, 38));
-                    jsObject.put("timeweather", LocalDate.now().plusDays(DaysPlus));
-                    jsObject.put("timestamp", LocalDateTime.now());
-
-                    var metadata = producer.send(new ProducerRecord<>("weather", jsObject)).get();
-
-                    LOG.info("====================");
-                    LOG.info("Metadata:{}", metadata);
-                    LOG.info("====================");
-                    Thread.sleep(1000);
-
-                }
-
+    public static void sendTestMessage(KafkaProducer<String, JSONObject> producer, int timesleep) {
+        LocalDate date = LocalDate.now();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        for (Cities city : cities) {
+            JSONObject jsObject = createJsonObject(localDateTime, date, city);
+            var metadata = producer.send(new ProducerRecord<>(TOPIC, jsObject));
+            LOG.info("====================");
+            LOG.info("Metadata:{}", metadata);
+            LOG.info("====================");
+            LOG.info("Отправлено сообщение: {}", jsObject);
+            try {
+                Thread.sleep(timesleep);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
+
+    private static JSONObject createJsonObject(LocalDateTime localDateTime, LocalDate date, Cities city) {
+        JSONObject jsObject = new JSONObject();
+        jsObject.put("weather", weathers[RANDOM.nextInt(weathers.length)].getName());
+        jsObject.put("city", city.getName());
+        jsObject.put("temperature", RANDOM.nextInt(10, 38));
+        jsObject.put("timeweather", date);
+        jsObject.put("timestamp", localDateTime);
+        return jsObject;
+    }
+
 }
