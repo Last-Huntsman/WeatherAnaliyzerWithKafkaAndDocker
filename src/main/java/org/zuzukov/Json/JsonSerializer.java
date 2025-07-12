@@ -1,4 +1,4 @@
-package org.zuzukov;
+package org.zuzukov.Json;
 
 import org.apache.kafka.common.serialization.Serializer;
 import org.json.JSONObject;

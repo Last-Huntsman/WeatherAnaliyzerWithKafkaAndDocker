@@ -1,9 +1,7 @@
-package org.zuzukov;
+package org.zuzukov.Json;
 
 import org.apache.kafka.common.serialization.Deserializer;
 import org.json.JSONObject;
-
-import java.util.Map;
 
 public class JsonDeserializer implements Deserializer<JSONObject>{
     @Override
