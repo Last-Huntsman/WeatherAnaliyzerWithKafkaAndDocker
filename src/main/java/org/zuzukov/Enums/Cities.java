@@ -18,4 +18,7 @@ public enum Cities {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
 }
