@@ -29,12 +29,28 @@ public class KafkaConsumerApplication {
         try (var consumer = new KafkaConsumer<String, JSONObject>(properties)) {
             consumer.subscribe(Pattern.compile("weather"));
 
-            while (true) {
-                ConsumerRecords<String, JSONObject> records = consumer.poll(Duration.ofMillis(1000));
-                if (!records.isEmpty()) {
-                    records.forEach(record -> Log.info("Получено сообщение: {}", record.value()));
-                    consumer.commitAsync();
+            try {
+                while (true) {
+                    ConsumerRecords<String, JSONObject> records = consumer.poll(Duration.ofMillis(1000));
+                    if (!records.isEmpty()) {
+                        records.forEach(record -> {
+                            try {
+                                Log.info("Получено сообщение: {}", record.value());
+                            } catch (Exception ex) {
+                                Log.error("Ошибка при обработке записи", ex);
+                            }
+                        });
+                        consumer.commitAsync((offsets, exception) -> {
+                            if (exception != null) {
+                                Log.warn("Не удалось зафиксировать offset", exception);
+                            }
+                        });
+                    }
                 }
+            } catch (Exception e) {
+                Log.error("Ошибка в потреблении сообщений", e);
+            } finally {
+                consumer.close();
             }
         }
 
