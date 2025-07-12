@@ -47,7 +47,7 @@ public class KafkaProducerApplication {
                     LOG.info("====================");
                     LOG.info("Metadata:{}", metadata);
                     LOG.info("====================");
-                    Thread.sleep(1);
+                    Thread.sleep(1000);
 
                 }
 

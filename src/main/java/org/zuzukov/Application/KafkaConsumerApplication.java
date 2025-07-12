@@ -30,10 +30,10 @@ public class KafkaConsumerApplication {
             consumer.subscribe(Pattern.compile("weather"));
 
             while (true) {
-                ConsumerRecords<String, JSONObject> records = consumer.poll(Duration.ofMillis(100));
+                ConsumerRecords<String, JSONObject> records = consumer.poll(Duration.ofMillis(1000));
 
                 if (!records.isEmpty()) {
-                    records.forEach(record -> Log.info("Record: {}", record));
+                    records.forEach(record -> System.out.println(record.value()));
                     consumer.commitAsync();
                 }
             }
