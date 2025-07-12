@@ -20,8 +20,10 @@ public class KafkaProducerApplication {
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class.getName());
+
+        
+
         try (var producer = new KafkaProducer<String, JSONObject>(properties)) {
-            int i=0;
             while (i++<3) {
                 JSONObject jsObject = new JSONObject();
                 jsObject.put("weather", i);
