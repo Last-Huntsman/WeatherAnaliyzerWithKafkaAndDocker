@@ -1,5 +1,7 @@
 package org.zuzukov.Application;
-
+/*
+* Стартер для продюсера и консюмера
+* */
 public class ApplicationLauncher {
     public static void main(String[] args) {
 
