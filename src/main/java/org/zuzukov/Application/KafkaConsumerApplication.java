@@ -21,9 +21,9 @@ public class KafkaConsumerApplication {
     private static Logger Log = LoggerFactory.getLogger(KafkaConsumerApplication.class);
     private static WeatherStatisticsCollector weatherStatisticsCollector = new WeatherStatisticsCollector();
 
-    public static void main(String[] args) {
+    public void Start() {
         var properties = new Properties();
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class.getName());
         properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
@@ -64,6 +64,7 @@ public class KafkaConsumerApplication {
         }
 
     }
+
     private static void startStatsPrinter() {
         Thread statsThread = new Thread(() -> {
             while (true) {

@@ -17,7 +17,7 @@ class KafkaProducerApplicationTest {
         @SuppressWarnings("unchecked")
         KafkaProducer<String, JSONObject> mockProducer = mock(KafkaProducer.class);
         when(mockProducer.send(any(ProducerRecord.class))).thenReturn(mock(Future.class));
-        KafkaProducerApplication.sendTestMessage(mockProducer,false);
+        KafkaProducerApplication.sendTestMessage(mockProducer,false,0);
         verify(mockProducer, atLeastOnce()).send(any(ProducerRecord.class));
     }
 }

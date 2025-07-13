@@ -1,5 +1,6 @@
 package org.zuzukov.Application;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -23,21 +24,21 @@ public class KafkaProducerApplication {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerApplication.class);
     private static final Cities[] cities = Cities.values();
 
-    public static void main(String[] args) {
+    public void Start(){
         var properties = new Properties();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class.getName());
 
         try (var producer = new KafkaProducer<String, JSONObject>(properties)) {
             for (int i = 0; i < 7; i++) {
-                sendTestMessage(producer, true);
+                sendTestMessage(producer, true,i);
             }
         }
     }
 
-    public static void sendTestMessage(KafkaProducer<String, JSONObject> producer, boolean threadSleep) {
-        LocalDate date = LocalDate.now();
+    public static void sendTestMessage(KafkaProducer<String, JSONObject> producer, boolean threadSleep, int plusDays) {
+        LocalDate date = LocalDate.now().plusDays(plusDays);
         LocalDateTime localDateTime = LocalDateTime.now();
         for (Cities city : cities) {
             JSONObject jsObject = JsonGenerator.createJsonObject(localDateTime, date, city);

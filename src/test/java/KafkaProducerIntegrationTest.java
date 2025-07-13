@@ -15,7 +15,7 @@ class KafkaProducerIntegrationTest {
     void testProducerSendsMessages() {
         @SuppressWarnings("unchecked")
         KafkaProducer<String, JSONObject> mockProducer = mock(KafkaProducer.class);
-        KafkaProducerApplication.sendTestMessage(mockProducer,false);
+        KafkaProducerApplication.sendTestMessage(mockProducer,false,0);
         verify(mockProducer, times(Cities.values().length)).send(any(ProducerRecord.class));
     }
 }
